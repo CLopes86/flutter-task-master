@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 // NOVO: Importar nossa página
-import 'package:flutter_task_master/views/pages/ tasks_page.dart';
+import 'package:flutter_task_master/views/pages/tasks_page.dart';
 
 void main() {
   runApp(const MyApp());
