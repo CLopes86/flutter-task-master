@@ -73,6 +73,65 @@ class _TasksPageState extends State<TasksPage> {
     ),
   ];
 
+  // ===== FUNÇÃO PARA ALTERNAR O ESTADO DA TAREFA =====
+  // Esta função é chamada quando clicamos numa tarefa
+  // Recebe o índice (posição) da tarefa na lista
+  void _toggleTaskCompletion(int index) {
+    setState(() {
+      final oldTask = _tasks[index];
+
+      final newTask = Task(
+        id: oldTask.id,
+        title: oldTask.title,
+        description: oldTask.description,
+        isCompleted: !oldTask.isCompleted,
+      );
+
+      _tasks[index] = newTask;
+
+      // Debug: Mostra no console o que aconteceu
+      print(
+          '✅ Tarefa "${newTask.title}" agora está: ${newTask.isCompleted ? "COMPLETA" : "INCOMPLETA"}');
+    });
+  }
+
+  void _deleteTask(int index) {
+    setState(() {
+      final deletedTask = _tasks[index];
+      _tasks.removeAt(index);
+      print('🗑️ Tarefa "${deletedTask.title}" foi apagada');
+    });
+  }
+
+  Future<bool?> _showDeleteConfirmationDialog(BuildContext context) async {
+    return await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Confirmar'),
+          content: const Text('Tens certeza que queres apagar esta tarefa?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, false);
+              },
+              child: const Text('Cancelar'),
+            ),
+            FilledButton(
+              onPressed: () {
+                Navigator.pop(context, true);
+              },
+              style: FilledButton.styleFrom(
+                backgroundColor: Colors.red,
+              ),
+              child: const Text('Apagar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   // ===== FUNÇÃO PARA MOSTRAR O DIALOG =====
   // Esta função é chamada quando clicamos no botão "+"
   // Mostra uma janela popup para adicionar uma nova tarefa
@@ -80,7 +139,7 @@ class _TasksPageState extends State<TasksPage> {
     // Controladores para guardar o que o utilizador escreve
     // TextEditingController: Guarda e controla o texto de um campo
     final titleController = TextEditingController();
-    final descrptionController = TextEditingController();
+    final descriptionController = TextEditingController();
 
     // showDialog: Mostra uma janela popup
     showDialog(
@@ -108,8 +167,8 @@ class _TasksPageState extends State<TasksPage> {
 
                 // decoration: Como decorar o campo
                 decoration: const InputDecoration(
-                  labelText: 'Titulo',
-                  hintText: 'Ex:Estudar',
+                  labelText: 'Título',
+                  hintText: 'Ex: Estudar',
                   border: OutlineInputBorder(),
                 ),
 
@@ -121,7 +180,7 @@ class _TasksPageState extends State<TasksPage> {
 
               // ----- CAMPO DA DESCRIÇÃO -----
               TextField(
-                controller: descrptionController,
+                controller: descriptionController,
                 decoration: const InputDecoration(
                   labelText: 'Descrição',
                   hintText: 'Ex: Rever os apontamentos',
@@ -151,13 +210,13 @@ class _TasksPageState extends State<TasksPage> {
               onPressed: () {
                 // Passo 1: Ler o que o utilizador escreveu
                 final title = titleController.text;
-                final description = descrptionController.text;
+                final description = descriptionController.text;
 
                 // Passo 2: Validar - Verificar se o título não está vazio
                 if (title.isEmpty) {
                   // Se estiver vazio, não fazemos nada
                   // Podíamos mostrar uma mensagem de erro aqui
-                  print('Erro: Titulo não pode ser vazio!');
+                  print('Erro: Título não pode ser vazio!');
                   return; // Sai da função sem fazer nada
                 }
 
@@ -182,12 +241,10 @@ class _TasksPageState extends State<TasksPage> {
                 // Passo 4: Adicionar à lista
                 // setState: Avisa o Flutter que algo mudou
                 // O Flutter vai redesenhar a interface
-                setState(
-                  () {
-                    // .add(): Adiciona a tarefa ao final da lista
-                    _tasks.add(newTask);
-                  },
-                );
+                setState(() {
+                  // .add(): Adiciona a tarefa ao final da lista
+                  _tasks.add(newTask);
+                });
 
                 // Passo 5: Fechar o Dialog
                 Navigator.pop(context);
@@ -195,7 +252,7 @@ class _TasksPageState extends State<TasksPage> {
                 // Passo 6: Mostrar mensagem de sucesso
                 print('✅ Tarefa adicionada: $title');
               },
-              child: const Text('Adcionar'),
+              child: const Text('Adicionar'),
             ),
           ],
         );
@@ -239,30 +296,77 @@ class _TasksPageState extends State<TasksPage> {
             // ===== LISTA DE TAREFAS =====
             // Expanded: Faz o widget ocupar todo o espaço disponível
             Expanded(
-                child: ListView.builder(
-              // itemCount: Quantos itens existem na lista?
-              // Resposta: O tamanho da lista _tasks
-              itemCount: _tasks.length,
+              child: ListView.builder(
+                // itemCount: Quantos itens existem na lista?
+                itemCount: _tasks.length,
 
-              // itemBuilder: Como construir cada item?
-              // Esta função é chamada para CADA tarefa
-              //
-              // Parâmetros:
-              //   - context: Informação sobre onde o widget está
-              //   - index: Posição atual (0, 1, 2, ...)
-              //
-              // Retorna: Um widget (no nosso caso, TaskCard)
-              itemBuilder: (context, index) {
-                // Pega a tarefa na posição 'index'
-                final task = _tasks[index];
+                // itemBuilder: Como construir cada item?
+                itemBuilder: (context, index) {
+                  // Pega a tarefa na posição 'index'
+                  final task = _tasks[index];
 
-                // Retorna o TaskCard com essa tarefa
-                return TaskCard(task: task);
-              },
-            ))
+                  // ===== DISMISSIBLE =====
+                  // Widget que permite deslizar para apagar
+                  return Dismissible(
+                    // ===== KEY =====
+                    // Cada Dismissible precisa de uma chave única
+                    key: Key(task.id),
+
+                    // ===== DIREÇÃO =====
+                    // endToStart = da direita para esquerda (→ ←)
+                    direction: DismissDirection.endToStart,
+
+                    // ===== BACKGROUND =====
+                    // O que aparece "atrás" quando deslizamos
+                    background: Container(
+                      // Cor vermelha (perigo)
+                      color: Colors.red,
+
+                      // Alinhamento à direita
+                      alignment: Alignment.centerRight,
+
+                      // Espaço interno
+                      padding: const EdgeInsets.only(right: 20),
+
+                      // Margem (igual ao card)
+                      margin: const EdgeInsets.only(bottom: 8),
+
+                      // Ícone de lixo
+                      child: const Icon(
+                        Icons.delete,
+                        color: Colors.white,
+                        size: 32,
+                      ),
+                    ),
+
+                    // ===== ON DISMISSED =====
+                    // Chamado quando completamos o deslize
+                    onDismissed: (direction) {
+                      _deleteTask(index);
+                    },
+
+                    // ===== CONFIRM DISMISS =====
+                    // Chamado ANTES de apagar - mostra confirmação
+                    confirmDismiss: (direction) async {
+                      return await _showDeleteConfirmationDialog(context);
+                    },
+
+                    // ===== CHILD =====
+                    // O TaskCard (o que vemos na tela)
+                    child: TaskCard(
+                      task: task,
+                      onTap: () {
+                        _toggleTaskCompletion(index);
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
           ],
         ),
       ),
+
       // ===== FLOATING ACTION BUTTON (FAB) =====
       // Botão redondo que flutua no canto inferior direito
       // Usado para adicionar novas tarefas
@@ -270,7 +374,7 @@ class _TasksPageState extends State<TasksPage> {
         onPressed: _showAddTaskDialog,
 
         // tooltip: Texto que aparece quando mantém o dedo pressionado
-        tooltip: 'Adcionar Tarefa',
+        tooltip: 'Adicionar Tarefa',
 
         child: const Icon(Icons.add),
       ),
@@ -278,7 +382,7 @@ class _TasksPageState extends State<TasksPage> {
   }
 }
 
-/// ============================================================================
+// ============================================================================
 /// TASK CARD WIDGET
 /// ============================================================================
 /// Widget reutilizável que representa um Card de tarefa.
@@ -288,76 +392,96 @@ class _TasksPageState extends State<TasksPage> {
 ///
 /// Parâmetros:
 ///   - task: O objeto Task com os dados a exibir
+///   - onTap: Função que é chamada quando clicamos no card
 /// ============================================================================
 class TaskCard extends StatelessWidget {
   final Task task; // Propriedade que vai guardar a tarefa
+
+  // Esta função será chamada quando clicarmos no card
+  // VoidCallback = uma função que não retorna nada e não recebe parâmetros
+  final VoidCallback onTap;
 
   // Construtor - recebe a tarefa como parâmetro obrigatório
   const TaskCard({
     super.key,
     required this.task,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 2,
-      margin: const EdgeInsets.only(bottom: 8),
+    // ===== GESTURE DETECTOR =====
+    // Detecta toques/cliques no card
+    return GestureDetector(
+      // onTap: Chama a função quando clicamos
+      onTap: onTap,
 
-      // Filho: o conteúdo dentro do Card
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
+      // child: O Card fica "dentro" do GestureDetector
+      child: Card(
+        elevation: 2,
+        margin: const EdgeInsets.only(bottom: 8),
 
-        // Column: organiza widgets verticalmente (um em cima do outro)
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ===== LINHA COM ÍCONE E TÍTULO =====
-            Row(
-              // Row: organiza widgets horizontalmente (lado a lado)
-              children: [
-                // --- ÍCONE DE STATUS ---
-                Icon(
-                  // Se a tarefa está completa, mostra check_circle
-                  // Se não, mostra círculo vazio
-                  task.isCompleted
-                      ? Icons.check_circle
-                      : Icons.radio_button_unchecked,
+        // Filho: o conteúdo dentro do Card
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
 
-                  // Cor: verde se completa, cinza se não
-                  color: task.isCompleted ? Colors.green : Colors.grey,
-                ),
+          // Column: organiza widgets verticalmente (um em cima do outro)
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // ===== LINHA COM ÍCONE E TÍTULO =====
+              Row(
+                // Row: organiza widgets horizontalmente (lado a lado)
+                children: [
+                  // --- ÍCONE DE STATUS ---
+                  Icon(
+                    // Se a tarefa está completa, mostra check_circle
+                    // Se não, mostra círculo vazio
+                    task.isCompleted
+                        ? Icons.check_circle
+                        : Icons.radio_button_unchecked,
 
-                // Espaço horizontal de 12 pixels entre o ícone e o título
-                const SizedBox(width: 12),
+                    // Cor: verde se completa, cinza se não
+                    color: task.isCompleted ? Colors.green : Colors.grey,
+                  ),
 
-                // --- TÍTULO DA TAREFA ---
-                Text(
-                  task.title,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                  // Espaço horizontal de 12 pixels entre o ícone e o título
+                  const SizedBox(width: 12),
+
+                  // --- TÍTULO DA TAREFA ---
+                  Text(
+                    task.title,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      // Riscar se completa
+                      decoration: task.isCompleted
+                          ? TextDecoration.lineThrough
+                          : TextDecoration.none,
+                      // Cor mais clara se completa
+                      color: task.isCompleted ? Colors.grey[600] : Colors.black,
+                    ),
+                  ),
+                ],
+              ),
+
+              // Espaço vertical de 4 pixels
+              const SizedBox(height: 4),
+
+              // ===== DESCRIÇÃO =====
+              Padding(
+                // Padding à esquerda para alinhar com o texto (depois do ícone)
+                padding: const EdgeInsets.only(left: 36),
+                child: Text(
+                  task.description,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey[600],
                   ),
                 ),
-              ],
-            ),
-
-            // Espaço vertical de 4 pixels
-            const SizedBox(height: 4),
-
-            // ===== DESCRIÇÃO =====
-            Padding(
-              // Padding à esquerda para alinhar com o texto (depois do ícone)
-              padding: const EdgeInsets.only(left: 30),
-              child: Text(
-                task.description,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[600],
-                ),
-              ),
-            )
-          ],
+              )
+            ],
+          ),
         ),
       ),
     );
