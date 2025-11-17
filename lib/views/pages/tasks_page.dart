@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/task.dart';
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TasksPage extends StatefulWidget {
   const TasksPage({super.key});
@@ -73,6 +75,12 @@ class _TasksPageState extends State<TasksPage> {
     ),
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    _loadTasks();
+  }
+
   // ===== FUNÇÃO PARA ALTERNAR O ESTADO DA TAREFA =====
   // Esta função é chamada quando clicamos numa tarefa
   // Recebe o índice (posição) da tarefa na lista
@@ -92,6 +100,7 @@ class _TasksPageState extends State<TasksPage> {
       // Debug: Mostra no console o que aconteceu
       print(
           '✅ Tarefa "${newTask.title}" agora está: ${newTask.isCompleted ? "COMPLETA" : "INCOMPLETA"}');
+      _saveTasks();
     });
   }
 
@@ -100,7 +109,33 @@ class _TasksPageState extends State<TasksPage> {
       final deletedTask = _tasks[index];
       _tasks.removeAt(index);
       print('🗑️ Tarefa "${deletedTask.title}" foi apagada');
+      _saveTasks();
     });
+  }
+
+  Future<void> _saveTasks() async {
+    final prefs = await SharedPreferences.getInstance();
+    final tasksJson = _tasks.map((task) => task.toJson()).toList();
+    final tasksString = jsonEncode(tasksJson);
+
+    await prefs.setString('task', tasksString);
+    print('💾 Tarefas guardadas: ${_tasks.length} tarefas');
+  }
+
+  Future<void> _loadTasks() async {
+    final prefs = await SharedPreferences.getInstance();
+    final tasksString = prefs.getString('task');
+    if (tasksString == null) {
+      print('📭 Nenhuma tarefa guardada ainda');
+      return;
+    }
+    final List<dynamic> tasksJson = jsonDecode(tasksString);
+    final tasks = tasksJson.map((json) => Task.fromJson(json)).toList();
+
+    setState(() {
+      _tasks = tasks;
+    });
+    print('📂 Tarefas carregadas: ${_tasks.length} tarefas');
   }
 
   Future<bool?> _showDeleteConfirmationDialog(BuildContext context) async {
@@ -245,6 +280,7 @@ class _TasksPageState extends State<TasksPage> {
                   // .add(): Adiciona a tarefa ao final da lista
                   _tasks.add(newTask);
                 });
+                _saveTasks();
 
                 // Passo 5: Fechar o Dialog
                 Navigator.pop(context);
