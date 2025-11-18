@@ -13,67 +13,10 @@ class TasksPage extends StatefulWidget {
 class _TasksPageState extends State<TasksPage> {
   // ===== LISTA DE TAREFAS =====
   // Esta lista guarda todas as tarefas da aplicação
-  // O ListView.builder vai criar um Card para cada uma automaticamente!
-  List<Task> _tasks = [
-    // Tarefa 1
-    const Task(
-      id: '1',
-      title: 'Aprender Flutter',
-      description: 'Completar o tutorial de Flutter',
-      isCompleted: false,
-    ),
-
-    // Tarefa 2
-    const Task(
-      id: '2',
-      title: 'Fazer exercícios',
-      description: '30 minutos de caminhada',
-      isCompleted: true,
-    ),
-
-    // Tarefa 3
-    const Task(
-      id: '3',
-      title: 'Ler um livro',
-      description: 'Ler 20 páginas do livro de Dart',
-      isCompleted: false,
-    ),
-
-    // ===== NOVAS TAREFAS =====
-    // Adicionamos mais 4 tarefas para testar
-
-    // Tarefa 4
-    const Task(
-      id: '4',
-      title: 'Estudar para o exame',
-      description: 'Rever os apontamentos de matemática',
-      isCompleted: false,
-    ),
-
-    // Tarefa 5
-    const Task(
-      id: '5',
-      title: 'Fazer compras',
-      description: 'Comprar leite, pão e frutas',
-      isCompleted: true,
-    ),
-
-    // Tarefa 6
-    const Task(
-      id: '6',
-      title: 'Ligar à mãe',
-      description: 'Perguntar como está',
-      isCompleted: false,
-    ),
-
-    // Tarefa 7
-    const Task(
-      id: '7',
-      title: 'Preparar jantar',
-      description: 'Cozinhar massa com legumes',
-      isCompleted: false,
-    ),
-  ];
+  // As tarefas são carregadas do SharedPreferences no initState
+  // e guardadas automaticamente quando há mudanças
+  List<Task> _tasks = [];
+  String _filtroAtual = 'todas';
 
   @override
   void initState() {
@@ -136,6 +79,30 @@ class _TasksPageState extends State<TasksPage> {
       _tasks = tasks;
     });
     print('📂 Tarefas carregadas: ${_tasks.length} tarefas');
+  }
+
+  List<Task> _obterTarefasFiltradas() {
+    if (_filtroAtual == 'completas') {
+      return _tasks.where((task) => task.isCompleted).toList();
+    } else if (_filtroAtual == 'incompletas') {
+      return _tasks.where((task) => !task.isCompleted).toList();
+    } else {
+      return _tasks;
+    }
+  }
+
+  Map<String, dynamic> _obterEstatisticas() {
+    final total = _tasks.length;
+    final completas = _tasks.where((task) => task.isCompleted).length;
+    final incompletas = total - completas;
+    final percentagem = total > 0 ? (completas / total * 100).toInt() : 0;
+
+    return {
+      'total': total,
+      'completas': completas,
+      'incompletas': incompletas,
+      'percentagem': percentagem,
+    };
   }
 
   Future<bool?> _showDeleteConfirmationDialog(BuildContext context) async {
@@ -319,6 +286,73 @@ class _TasksPageState extends State<TasksPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // ===== CARD DE ESTATÍSTICAS =====
+            Card(
+              elevation: 4,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Builder(builder: (context) {
+                  final stats = _obterEstatisticas();
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        '📊 Estatísticas',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 12,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Total: ${stats['total']}',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          Text(
+                            '✅ Completas: ${stats['completas']}',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.green,
+                            ),
+                          ),
+                          Text(
+                            '⭕ Incompletas: ${stats['incompletas']}',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        'Progresso: ${stats['percentagem']}%',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      LinearProgressIndicator(
+                        value: stats['total'] > 0
+                            ? stats['completas'] / stats['total']
+                            : 0,
+                        backgroundColor: Colors.grey[300],
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Colors.green,
+                        ),
+                        minHeight: 8,
+                      ),
+                    ],
+                  );
+                }),
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
             const Text(
               // ===== TÍTULO =====
               'Lista de Tarefas:',
@@ -329,17 +363,52 @@ class _TasksPageState extends State<TasksPage> {
             ),
             const SizedBox(height: 16),
 
+            // ===== BOTÕES DE FILTRO =====
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                FilterChip(
+                  label: const Text('Todas'),
+                  selected: _filtroAtual == 'todas',
+                  onSelected: (bool selected) {
+                    setState(() {
+                      _filtroAtual = 'todas';
+                    });
+                  },
+                ),
+                FilterChip(
+                  label: const Text('Completas'),
+                  selected: _filtroAtual == 'completas',
+                  onSelected: (bool select) {
+                    setState(() {
+                      _filtroAtual = 'completas';
+                    });
+                  },
+                ),
+                FilterChip(
+                  label: const Text('Incompletas'),
+                  selected: _filtroAtual == 'incompletas',
+                  onSelected: (bool select) {
+                    setState(() {
+                      _filtroAtual = 'incompletas';
+                    });
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+
             // ===== LISTA DE TAREFAS =====
             // Expanded: Faz o widget ocupar todo o espaço disponível
             Expanded(
               child: ListView.builder(
                 // itemCount: Quantos itens existem na lista?
-                itemCount: _tasks.length,
+                itemCount: _obterTarefasFiltradas().length,
 
                 // itemBuilder: Como construir cada item?
                 itemBuilder: (context, index) {
-                  // Pega a tarefa na posição 'index'
-                  final task = _tasks[index];
+                  final tarefasFiltradas = _obterTarefasFiltradas();
+                  final task = tarefasFiltradas[index];
 
                   // ===== DISMISSIBLE =====
                   // Widget que permite deslizar para apagar
