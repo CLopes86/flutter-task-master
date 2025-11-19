@@ -1,23 +1,36 @@
-// lib/main.dart
+/// ============================================================================
+/// TASK MASTER - MAIN
+/// ============================================================================
+/// Autor: Cesaltino Lopes
+/// GitHub: @CLopes86
+/// Data: Novembro 2025
+///
+/// Ponto de entrada da aplicação Task Master.
+/// Configura o MaterialApp com tema Material Design 3.
+/// ============================================================================
 
 import 'package:flutter/material.dart';
-// NOVO: Importar nossa página
 import 'package:flutter_task_master/views/pages/tasks_page.dart';
 
+/// Função principal - inicia a aplicação
 void main() {
   runApp(const MyApp());
 }
 
+/// Widget raiz da aplicação
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      // Remove banner de debug
       debugShowCheckedModeBanner: false,
+
+      // Título da aplicação
       title: 'Task Master',
 
-      // Tema configurado aqui
+      // Configuração do tema
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
@@ -25,7 +38,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
 
-      // MUDANÇA: Usar nossa página em vez do Scaffold direto
+      // Página inicial
       home: const TasksPage(),
     );
   }

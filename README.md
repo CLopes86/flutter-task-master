@@ -6,14 +6,18 @@
   ![Dart](https://img.shields.io/badge/Dart-3.5-0175C2?logo=dart&logoColor=white)
   ![License](https://img.shields.io/badge/License-MIT-green.svg)
   ![Platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS-lightgrey)
+  ![Version](https://img.shields.io/badge/Version-1.0.0-blue)
   
-  <h3>📝 Aplicação minimalista de gestão de tarefas</h3>
+  <h3>📝 Aplicação completa de gestão de tarefas com interface moderna</h3>
   
   <p>
     <a href="#sobre">Sobre</a> •
     <a href="#funcionalidades">Funcionalidades</a> •
+    <a href="#screenshots">Screenshots</a> •
     <a href="#tecnologias">Tecnologias</a> •
+    <a href="#arquitetura">Arquitetura</a> •
     <a href="#instalação">Instalação</a> •
+    <a href="#como-usar">Como Usar</a> •
     <a href="#autor">Autor</a>
   </p>
   
@@ -23,36 +27,55 @@
 
 ## 📖 Sobre
 
-**Task Master** é uma aplicação de gestão de tarefas desenvolvida em Flutter, focada em simplicidade e eficiência. Este projeto demonstra boas práticas de desenvolvimento mobile e arquitetura limpa.
+**Task Master** é uma aplicação completa de gestão de tarefas desenvolvida em Flutter, focada em simplicidade, eficiência e boa experiência do utilizador. O projeto demonstra implementação de CRUD completo, persistência de dados, filtros dinâmicos e estatísticas em tempo real.
 
 ### 🎯 Objetivos do Projeto
 
-- Aprender e praticar Flutter
-- Aplicar princípios de Clean Code
-- Demonstrar boas práticas de arquitetura
-- Criar portfolio profissional
+- ✅ Praticar desenvolvimento Flutter com boas práticas
+- ✅ Implementar CRUD completo com persistência de dados
+- ✅ Aplicar princípios de Clean Code e arquitetura limpa
+- ✅ Criar interface moderna com Material Design 3
+- ✅ Desenvolver portfolio profissional
 
 ---
 
 ## ✨ Funcionalidades
 
-### 🔄 Versão Atual (v0.1.0 - MVP)
+### 🎉 Versão Atual (v1.0.0 - Completa)
 
-- [x] ✅ Interface inicial funcional
-- [x] ✅ AppBar com título
-- [x] ✅ Floating Action Button
-- [x] ✅ Snackbar de teste
+#### 📝 Gestão de Tarefas (CRUD)
+- [x] ➕ **Adicionar tarefas** - Dialog com validação de campos
+- [x] 📋 **Listar tarefas** - ListView dinâmico com scroll
+- [x] ✅ **Marcar como completa** - Toque simples para alternar estado
+- [x] ✏️ **Editar tarefas** - Toque longo abre dialog de edição
+- [x] 🗑️ **Apagar tarefas** - Swipe to delete com confirmação
 
-### 🚀 Próximas Features
+#### 💾 Persistência de Dados
+- [x] **SharedPreferences** - Dados salvos localmente
+- [x] **Serialização JSON** - Conversão automática de objetos
+- [x] **Carregamento automático** - Dados carregados ao abrir app
 
-- [ ] 📝 Adicionar tarefas
-- [ ] ✅ Marcar como concluída
-- [ ] 🗑️ Excluir tarefas
-- [ ] ✏️ Editar tarefas
-- [ ] 💾 Persistência local (SharedPreferences)
-- [ ] 🎨 Temas claro/escuro
-- [ ] 🔍 Filtros e ordenação
-- [ ] 📊 Estatísticas
+#### 🔍 Filtros e Visualização
+- [x] **Filtro "Todas"** - Mostra todas as tarefas
+- [x] **Filtro "Completas"** - Apenas tarefas concluídas
+- [x] **Filtro "Incompletas"** - Apenas tarefas pendentes
+- [x] **Visual feedback** - Botões com estado selecionado
+
+#### 📊 Estatísticas em Tempo Real
+- [x] **Contador de tarefas** - Total, completas e incompletas
+- [x] **Percentagem de conclusão** - Cálculo automático
+- [x] **Barra de progresso** - Visualização gráfica do progresso
+- [x] **Atualização dinâmica** - Muda conforme interações
+
+#### 🎨 Interface e UX
+- [x] **Material Design 3** - Design moderno e consistente
+- [x] **Feedback visual** - Ícones de estado (✅/⭕)
+- [x] **Texto riscado** - Tarefas completas ficam riscadas
+- [x] **Animações suaves** - Transições ao adicionar/remover
+- [x] **Dialog de confirmação** - Previne exclusões acidentais
+- [x] **Campos pré-preenchidos** - Ao editar, mostra dados atuais
+
+
 
 ---
 
@@ -63,22 +86,71 @@
 - **Flutter** 3.24 - Framework multiplataforma
 - **Dart** 3.5 - Linguagem de programação
 
-### Arquitetura
+### Packages Utilizados
+```yaml
+dependencies:
+  flutter:
+    sdk: flutter
+  shared_preferences: ^2.3.3  # Persistência local
+```
 
-- **MVC** - Model-View-Controller (planejado)
-- **Material Design 3** - Sistema de design
+### Arquitetura e Padrões
 
-### Ferramentas
+- **Model-View** - Separação de responsabilidades
+- **StatefulWidget** - Gerenciamento de estado local
+- **Builder Pattern** - Construção de widgets dinâmicos
+- **Factory Constructor** - Deserialização de objetos
 
-- **VS Code** - Editor de código
-- **Git** - Controle de versão
-- **GitHub** - Hospedagem de código
+### Conceitos Aplicados
+
+- ✅ **CRUD completo** (Create, Read, Update, Delete)
+- ✅ **Persistência de dados** com SharedPreferences
+- ✅ **Serialização/Deserialização** JSON
+- ✅ **Callbacks** para comunicação entre widgets
+- ✅ **Filtros dinâmicos** com lógica condicional
+- ✅ **Estatísticas calculadas** em tempo real
+- ✅ **Validação de formulários**
+- ✅ **Gestures** (tap, long press, swipe)
 
 ---
 
-## 📱 Screenshots
+## 🏗️ Arquitetura
 
-> 🚧 Em desenvolvimento - Screenshots em breve!
+### Estrutura de Pastas
+```
+flutter_task_master/
+├── lib/
+│   ├── models/
+│   │   └── task.dart              # Modelo de dados Task
+│   ├── views/
+│   │   └── pages/
+│   │       └── tasks_page.dart    # Página principal
+│   └── main.dart                  # Entry point
+│
+├── screenshots/                    # Screenshots da aplicação
+├── .gitignore                     # Arquivos ignorados
+├── LICENSE                        # Licença MIT
+├── README.md                      # Este arquivo
+└── pubspec.yaml                   # Dependências
+```
+
+### Fluxo de Dados
+```
+┌─────────────────────────────────────────────┐
+│           TasksPage (State)                 │
+│  ┌───────────────────────────────────────┐  │
+│  │  List<Task> _tasks = []               │  │
+│  │  String _filtroAtual = 'todas'        │  │
+│  └───────────────────────────────────────┘  │
+│                    │                         │
+│          ┌─────────┼─────────┐              │
+│          ▼         ▼         ▼               │
+│    _saveTasks  _loadTasks  Filtros          │
+│          │         │         │               │
+│          ▼         ▼         ▼               │
+│   SharedPreferences  JSON  ListView.builder │
+└─────────────────────────────────────────────┘
+```
 
 ---
 
@@ -86,11 +158,17 @@
 
 ### Pré-requisitos
 
-- Flutter SDK 3.24 ou superior
-- Dart SDK 3.5 ou superior
-- Android Studio / Xcode (para emuladores)
+- **Flutter SDK** 3.24 ou superior
+- **Dart SDK** 3.5 ou superior
+- **Android Studio** ou **Xcode** (para emuladores)
+- **VS Code** ou **Android Studio** (IDEs recomendadas)
 
-### Passos
+### Verificar instalação
+```bash
+flutter doctor
+```
+
+### Passos para Instalação
 ```bash
 # 1. Clone o repositório
 git clone https://github.com/CLopes86/flutter-task-master.git
@@ -105,114 +183,185 @@ flutter pub get
 flutter run
 ```
 
----
+### Plataformas Suportadas
 
-## 📂 Estrutura do Projeto
-flutter_task_master/
-├── lib/
-│   ├── views/
-│   │   └── pages/
-│   │       └── tasks_page.dart    # Página principal
-│   └── main.dart                   # Entry point
-│
-├── assets/
-│   └── screenshots/                # Screenshots da app
-│
-├── .gitignore                      # Arquivos ignorados
-├── LICENSE                         # Licença MIT
-├── README.md                       # Este arquivo
-└── pubspec.yaml                    # Dependências
+- ✅ **Android** - API 21+
+- ✅ **iOS** - iOS 12+
+- ⚠️ **Web** - Não otimizado
+- ⚠️ **Desktop** - Não testado
 
 ---
 
-## 📈 Roadmap
+## 💡 Como Usar
 
-### Fase 1 - MVP ✅ (Atual)
-- Interface inicial funcional
-- Estrutura básica do projeto
+### Adicionar Tarefa
+1. Toque no botão **"+"** (canto inferior direito)
+2. Preencha o **título** (obrigatório)
+3. Preencha a **descrição** (opcional)
+4. Toque em **"Adicionar"**
 
-### Fase 2 - CRUD Básico 🔄 (Em desenvolvimento)
-- Adicionar tarefas
-- Listar tarefas
-- Marcar como concluída
-- Excluir tarefas
+### Marcar como Completa
+- **Toque simples** na tarefa para alternar entre completa/incompleta
+- O ícone muda de ⭕ (cinza) para ✅ (verde)
+- O texto fica riscado quando completa
 
-### Fase 3 - Persistência 📅 (Planejado)
-- SharedPreferences
-- Salvar estado da aplicação
+### Editar Tarefa
+1. **Toque longo** (pressione e segure) na tarefa
+2. Altere o **título** e/ou **descrição**
+3. Toque em **"Salvar"**
 
-### Fase 4 - Melhorias 🎨 (Futuro)
-- Editar tarefas
-- Temas
-- Filtros
-- Animações
+### Apagar Tarefa
+1. **Deslize** a tarefa para a esquerda
+2. Confirme a exclusão no dialog
+
+### Filtrar Tarefas
+- Toque em **"Todas"** - mostra todas as tarefas
+- Toque em **"Completas"** - mostra só as concluídas
+- Toque em **"Incompletas"** - mostra só as pendentes
+
+### Visualizar Estatísticas
+- Card no topo mostra:
+  - Total de tarefas
+  - Tarefas completas e incompletas
+  - Percentagem de conclusão
+  - Barra de progresso visual
+
+---
+
+## 📈 Roadmap e Melhorias Futuras
+
+### 🎨 Interface
+- [ ] Tema escuro (Dark Mode)
+- [ ] Animações avançadas
+- [ ] Feedback háptico
+- [ ] Ícones personalizados
+
+### 🚀 Funcionalidades
+- [ ] Categorias/Tags para tarefas
+- [ ] Prioridades (Alta, Média, Baixa)
+- [ ] Data de vencimento (Deadline)
+- [ ] Notificações
+- [ ] Pesquisa de tarefas
+- [ ] Ordenação customizada
+
+### 🗄️ Dados
+- [ ] Migrar para SQLite/Hive
+- [ ] Backup em nuvem
+- [ ] Sincronização multi-dispositivo
+- [ ] Export/Import de dados
+
+### 🧪 Qualidade
+- [ ] Testes unitários
+- [ ] Testes de integração
+- [ ] CI/CD com GitHub Actions
+- [ ] Análise de código (linting)
 
 ---
 
 ## 🤝 Contribuindo
 
-Contribuições são bem-vindas! Sinta-se à vontade para:
+Contribuições são bem-vindas! Para contribuir:
 
-1. Fazer fork do projeto
-2. Criar uma branch (`git checkout -b feature/NovaFuncionalidade`)
-3. Commit suas mudanças (`git commit -m 'feat: adiciona nova funcionalidade'`)
-4. Push para a branch (`git push origin feature/NovaFuncionalidade`)
-5. Abrir um Pull Request
+1. Faça **fork** do projeto
+2. Crie uma **branch** para sua feature (`git checkout -b feature/NovaFuncionalidade`)
+3. **Commit** suas mudanças (`git commit -m 'feat: adiciona nova funcionalidade'`)
+4. Faça **push** para a branch (`git push origin feature/NovaFuncionalidade`)
+5. Abra um **Pull Request**
+
+### Padrão de Commits
+
+Seguimos o padrão [Conventional Commits](https://www.conventionalcommits.org/):
+
+- `feat`: Nova funcionalidade
+- `fix`: Correção de bug
+- `docs`: Documentação
+- `style`: Formatação de código
+- `refactor`: Refatoração de código
+- `test`: Testes
+- `chore`: Tarefas de build/configuração
 
 ---
 
 ## 👨‍💻 Autor
 
-**Cesaltino Lopes**
+<div align="center">
+  
+  <img src="https://github.com/CLopes86.png" alt="Cesaltino Lopes" width="150" style="border-radius: 50%;">
+  
+  ### Cesaltino Lopes
+  
+  Estudante de **Ciências Informáticas e Multimédia**  
+  Instituto Politécnico de Castelo Branco | Portugal
+  
+  Apaixonado por desenvolvimento mobile e tecnologias Flutter
+  
+  <br>
+  
+  [![GitHub](https://img.shields.io/badge/GitHub-CLopes86-181717?logo=github&style=for-the-badge)](https://github.com/CLopes86)
+  [![LinkedIn](https://img.shields.io/badge/LinkedIn-Cesaltino%20Lopes-0077B5?logo=linkedin&style=for-the-badge)](https://www.linkedin.com/in/cesaltino-lopes)
+  [![Email](https://img.shields.io/badge/Email-c.lopes46cv@gmail.com-D14836?logo=gmail&logoColor=white&style=for-the-badge)](mailto:c.lopes46cv@gmail.com)
+  
+</div>
 
-Estudante de Informática e Multimédia  
-Instituto Politécnico de Castelo Branco
+---
 
-[![GitHub](https://img.shields.io/badge/GitHub-CLopes86-181717?logo=github)](https://github.com/CLopes86)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Cesaltino%20Lopes-0077B5?logo=linkedin)](https://www.linkedin.com/in/cesaltino-lopes)
-[![Email](https://img.shields.io/badge/Email-c.lopes46cv@gmail.com-D14836?logo=gmail&logoColor=white)](mailto:c.lopes46cv@gmail.com)
+## 📊 Estatísticas do Projeto
+
+- **Linhas de código**: ~800 linhas
+- **Tempo de desenvolvimento**: ~15 horas
+- **Commits**: 5+
+- **Funcionalidades**: 15+
+- **Packages externos**: 1 (shared_preferences)
 
 ---
 
 ## 📄 Licença
 
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+Este projeto está sob a licença **MIT**. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+### Resumo da Licença
+
+✅ Uso comercial  
+✅ Modificação  
+✅ Distribuição  
+✅ Uso privado  
+
+❌ Responsabilidade  
+❌ Garantia  
 
 ---
 
 ## 🙏 Agradecimentos
 
-- Comunidade Flutter
-- Instituto Politécnico de Castelo Branco
-- Colegas e professores
+- **Comunidade Flutter** - Pela documentação e suporte
+- **Instituto Politécnico de Castelo Branco** - Pela formação
+- **Você** - Por visitar este projeto!
+
+---
+
+## 📚 Recursos e Referências
+
+### Documentação
+- [Flutter Documentation](https://docs.flutter.dev/)
+- [Dart Language Tour](https://dart.dev/guides/language/language-tour)
+- [Material Design 3](https://m3.material.io/)
+
+### Tutoriais e Cursos
+- [Flutter Codelabs](https://docs.flutter.dev/codelabs)
+- [Dart Pad](https://dartpad.dev/)
+
+### Comunidades
+- [Flutter Community](https://flutter.dev/community)
+- [r/FlutterDev](https://reddit.com/r/FlutterDev)
 
 ---
 
 <div align="center">
   
-  ⭐ Se este projeto te ajudou, considera dar uma estrela!
+  ### ⭐ Se este projeto te ajudou, considera dar uma estrela!
   
-  **Feito com ❤️ e Flutter**
+  **Feito com ❤️ e Flutter por Cesaltino Lopes**
+  
+  © 2025 - Task Master - Todos os direitos reservados
   
 </div>
-MIT License
-
-Copyright (c) 2025 Cesaltino Lopes
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
